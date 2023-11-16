@@ -203,13 +203,19 @@ namespace KaracaBesik_project1.Controllers
     {
         private const int FileSize = 50 * 1024 * 1024; // 50 MB
 
-        [HttpGet]
+        [HttpGet("DownloadFile")]
         public IActionResult Download()
         {
-            var randomData = new byte[FileSize];
-            new Random().NextBytes(randomData);
+            var client = new HttpClient();
+            var response = await client.GetAsync("https://link.testfile.org/300MB");
 
-            return File(randomData, "application/octet-stream", "randomfile.dat");
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Dosya indirilemedi.");
+            }
+
+            var content = await response.Content.ReadAsByteArrayAsync();
+            return File(content, "application/octet-stream", "downloadedfile.zip");
         }
     }
 
