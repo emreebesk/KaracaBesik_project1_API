@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace KaracaBesik_project1.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class PingController : ControllerBase
@@ -15,26 +15,33 @@ namespace KaracaBesik_project1.Controllers
         }
 
         [HttpGet]
-        public IActionResult Ping() 
+        public IActionResult Ping()
         {
-            try 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            try
             {
-                _logger.LogInformation("Request received for ping aat {Time}", DateTime.UtcNow);
+                // Bu kısımda herhangi bir işlem yapmanıza gerek yok.
+                // Ping isteği, sunucunun çalışır durumda olduğunu doğrulamak için yeterlidir.
+
+                stopwatch.Stop();
 
                 var response = new
                 {
                     Message = "PingPong",
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTime.UtcNow,
+                    Latency = stopwatch.ElapsedMilliseconds // Ping süresi milisaniye cinsinden
                 };
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occured while ping request.");
-                return StatusCode(500);
+                stopwatch.Stop();
+                _logger.LogError(ex, "Error occurred while processing ping request.");
+                return StatusCode(500, new { Latency = stopwatch.ElapsedMilliseconds });
             }
-        
         }
     }
 }
