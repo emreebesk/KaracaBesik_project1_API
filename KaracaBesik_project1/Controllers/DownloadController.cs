@@ -144,55 +144,73 @@ using System.Threading.Tasks;
 
 namespace KaracaBesik_project1.Controllers
 {
+    //[ApiController]
+    //[Route("api/[controller]")]
+    //public class DownloadController : ControllerBase
+    //{
+    //    private readonly ILogger<DownloadController> _logger;
+    //    private readonly HttpClient _httpClient;
+    //    private const string TestFileUrl = "http://ipv4.download.thinkbroadband.com/50MB.zip";
+
+    //    public DownloadController(ILogger<DownloadController> logger, IHttpClientFactory httpClientFactory)
+    //    {
+    //        _logger = logger;
+    //        _httpClient = httpClientFactory.CreateClient();
+    //    }
+
+    //    [HttpGet]
+    //    public async Task<IActionResult> DownloadFile()
+    //    {
+    //        try
+    //        {
+    //            _logger.LogInformation("Download test started at {Time}", DateTime.UtcNow);
+    //            var stopwatch = new System.Diagnostics.Stopwatch();
+    //            stopwatch.Start();
+
+    //            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+    //            var response = await _httpClient.GetAsync(TestFileUrl, HttpCompletionOption.ResponseHeadersRead);
+
+    //            _logger.LogInformation("Response status code: {StatusCode}", response.StatusCode);
+
+    //            if (!response.IsSuccessStatusCode)
+    //            {
+    //                _logger.LogWarning("Non-success status code received.");
+    //                return StatusCode((int)response.StatusCode, "Failed to download the file.");
+    //            }
+
+    //            var fileSizeInBytes = response.Content.Headers.ContentLength ?? 0;
+    //            stopwatch.Stop();
+    //            var downloadTimeInSeconds = stopwatch.Elapsed.TotalSeconds;
+    //            var speedInMbps = (fileSizeInBytes / downloadTimeInSeconds) * 8 / 1_000_000; // Convert bytes per second to Mbps
+
+    //            _logger.LogInformation("Download test completed in {DownloadTimeInSeconds} seconds with a speed of {SpeedInMbps} Mbps", downloadTimeInSeconds, speedInMbps);
+
+    //            // Instead of returning the file, return the download speed
+    //            return Ok(new { DownloadSpeedInMbps = speedInMbps });
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            _logger.LogError(ex, "Error occurred while downloading the test file.");
+    //            return StatusCode(500, "An internal error occurred");
+    //        }
+    //    }
+    //}
+
+
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class DownloadController : ControllerBase
     {
-        private readonly ILogger<DownloadController> _logger;
-        private readonly HttpClient _httpClient;
-        private const string TestFileUrl = "http://ipv4.download.thinkbroadband.com/50MB.zip";
-
-        public DownloadController(ILogger<DownloadController> logger, IHttpClientFactory httpClientFactory)
-        {
-            _logger = logger;
-            _httpClient = httpClientFactory.CreateClient();
-        }
+        private const int FileSize = 50 * 1024 * 1024; // 50 MB
 
         [HttpGet]
-        public async Task<IActionResult> DownloadFile()
+        public IActionResult Download()
         {
-            try
-            {
-                _logger.LogInformation("Download test started at {Time}", DateTime.UtcNow);
-                var stopwatch = new System.Diagnostics.Stopwatch();
-                stopwatch.Start();
+            var randomData = new byte[FileSize];
+            new Random().NextBytes(randomData);
 
-                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                var response = await _httpClient.GetAsync(TestFileUrl, HttpCompletionOption.ResponseHeadersRead);
-
-                _logger.LogInformation("Response status code: {StatusCode}", response.StatusCode);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Non-success status code received.");
-                    return StatusCode((int)response.StatusCode, "Failed to download the file.");
-                }
-
-                var fileSizeInBytes = response.Content.Headers.ContentLength ?? 0;
-                stopwatch.Stop();
-                var downloadTimeInSeconds = stopwatch.Elapsed.TotalSeconds;
-                var speedInMbps = (fileSizeInBytes / downloadTimeInSeconds) * 8 / 1_000_000; // Convert bytes per second to Mbps
-
-                _logger.LogInformation("Download test completed in {DownloadTimeInSeconds} seconds with a speed of {SpeedInMbps} Mbps", downloadTimeInSeconds, speedInMbps);
-
-                // Instead of returning the file, return the download speed
-                return Ok(new { DownloadSpeedInMbps = speedInMbps });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while downloading the test file.");
-                return StatusCode(500, "An internal error occurred");
-            }
+            return File(randomData, "application/octet-stream", "randomfile.dat");
         }
     }
+
 }

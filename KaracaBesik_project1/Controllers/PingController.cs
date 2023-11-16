@@ -18,7 +18,7 @@ namespace YourNamespace.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        [HttpGet]
+        [HttpGet("PingTest")]
         public Task<IActionResult> PingTest()
         {
             //var stopwatch = new Stopwatch();
