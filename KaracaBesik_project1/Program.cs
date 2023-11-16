@@ -23,16 +23,16 @@ builder.Services.Configure<FormOptions>(x =>
 
 builder.Services.AddControllers();
 //for dependency injection:
-//builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration["AzureBlobStorage:ConnectionString"]));
-var connectionString = builder.Configuration["AzureBlobStorage:ConnectionString"];
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
-}
+////builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration["AzureBlobStorage:ConnectionString"]));
+//var connectionString = builder.Configuration["AzureBlobStorage:ConnectionString"];
+//if (string.IsNullOrEmpty(connectionString))
+//{
+//    throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
+//}
 
-Console.WriteLine($"ConnectionString: {connectionString}");
-builder.Services.AddSingleton(new BlobServiceClient(connectionString));
-builder.Services.AddSingleton(builder.Configuration["AzureBlobStorage:ContainerName"]);
+//Console.WriteLine($"ConnectionString: {connectionString}");
+//builder.Services.AddSingleton(new BlobServiceClient(connectionString));
+//builder.Services.AddSingleton(builder.Configuration["AzureBlobStorage:ContainerName"]);
 
 // Register HttpClientFactory
 builder.Services.AddHttpClient();
