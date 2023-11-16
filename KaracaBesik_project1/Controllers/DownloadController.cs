@@ -201,21 +201,25 @@ namespace KaracaBesik_project1.Controllers
     [Route("[controller]")]
     public class DownloadController : ControllerBase
     {
-        private const int FileSize = 50 * 1024 * 1024; // 50 MB
+       
 
         [HttpGet("DownloadFile")]
         public async Task<IActionResult> DownloadAsync()
         {
-            var client = new HttpClient();
-            var response = await client.GetAsync("https://link.testfile.org/300MB");
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            var response = await httpClient.GetAsync("http://ipv4.download.thinkbroadband.com/20MB.zip");
 
             if (!response.IsSuccessStatusCode)
             {
                 return BadRequest("Dosya indirilemedi.");
             }
-
-            var content = await response.Content.ReadAsByteArrayAsync();
-            return File(content, "application/octet-stream", "downloadedfile.zip");
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            return new FileStreamResult(responseStream, "application/octet-stream")
+            {
+                FileDownloadName = "downloadedfile.zip"
+            };
         }
     }
 
