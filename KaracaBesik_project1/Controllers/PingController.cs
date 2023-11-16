@@ -21,29 +21,7 @@ namespace YourNamespace.Controllers
         [HttpGet("PingTest")]
         public Task<IActionResult> PingTest()
         {
-            //var stopwatch = new Stopwatch();
-            //var client = _httpClientFactory.CreateClient();
-
-            //try
-            //{
-            //    stopwatch.Start();
-            //    var response = await client.GetAsync(url);
-            //    stopwatch.Stop();
-
-            //    if (!response.IsSuccessStatusCode)
-            //    {
-            //        return BadRequest($"Unable to reach {url}.");
-            //    }
-
-            //    var responseTime = stopwatch.ElapsedMilliseconds;
-            //    return Ok(new { Url = url, ResponseTimeMs = responseTime });
-            //}
-            //catch (HttpRequestException)
-            //{
-            //    stopwatch.Stop();
-            //    return StatusCode(500, $"Error occurred while trying to reach {url}.");
-            //}
-
+           
             Ping pingSender = new Ping();
             PingOptions options = new PingOptions();
             options.DontFragment = true;
