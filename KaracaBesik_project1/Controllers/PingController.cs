@@ -1,47 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Net.NetworkInformation;
+using System.Text;
 
-namespace KaracaBesik_project1.Controllers
+namespace YourNamespace.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class PingController : ControllerBase
+    [Route("[controller]")]
+    public class PingTestController : ControllerBase
     {
-        private readonly ILogger<PingController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public PingController(ILogger<PingController> logger)
+        public PingTestController(IHttpClientFactory httpClientFactory)
         {
-            _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
-        public IActionResult Ping()
+        public Task<IActionResult> Ping()
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            //var stopwatch = new Stopwatch();
+            //var client = _httpClientFactory.CreateClient();
 
-            try
+            //try
+            //{
+            //    stopwatch.Start();
+            //    var response = await client.GetAsync(url);
+            //    stopwatch.Stop();
+
+            //    if (!response.IsSuccessStatusCode)
+            //    {
+            //        return BadRequest($"Unable to reach {url}.");
+            //    }
+
+            //    var responseTime = stopwatch.ElapsedMilliseconds;
+            //    return Ok(new { Url = url, ResponseTimeMs = responseTime });
+            //}
+            //catch (HttpRequestException)
+            //{
+            //    stopwatch.Stop();
+            //    return StatusCode(500, $"Error occurred while trying to reach {url}.");
+            //}
+
+            Ping pingSender = new Ping();
+            PingOptions options = new PingOptions();
+            options.DontFragment = true;
+            // Create a buffer of 32 bytes of data to be transmitted.
+            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+            byte[] buffer = Encoding.ASCII.GetBytes(data);
+            int timeout = 120;
+
+            string target = "www.google.com";
+            PingReply reply = pingSender.Send(target, timeout, buffer, options);
+
+            var response = new
             {
-                // Bu kısımda herhangi bir işlem yapmanıza gerek yok.
-                // Ping isteği, sunucunun çalışır durumda olduğunu doğrulamak için yeterlidir.
+                Message = "Your Ping Approximately",
+                Ping = reply.RoundtripTime
+            };
 
-                stopwatch.Stop();
+            return Task.FromResult<IActionResult>(Ok(response));
 
-                var response = new
-                {
-                    Message = "PingPong",
-                    Timestamp = DateTime.UtcNow,
-                    Latency = stopwatch.ElapsedMilliseconds // Ping süresi milisaniye cinsinden
-                };
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                stopwatch.Stop();
-                _logger.LogError(ex, "Error occurred while processing ping request.");
-                return StatusCode(500, new { Latency = stopwatch.ElapsedMilliseconds });
-            }
         }
     }
 }
