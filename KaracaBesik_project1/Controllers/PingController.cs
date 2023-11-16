@@ -19,7 +19,7 @@ namespace YourNamespace.Controllers
         }
 
         [HttpGet]
-        public Task<IActionResult> Ping()
+        public Task<IActionResult> PingTest()
         {
             //var stopwatch = new Stopwatch();
             //var client = _httpClientFactory.CreateClient();
