@@ -19,28 +19,31 @@ namespace YourNamespace.Controllers
         }
 
         [HttpGet("PingTest")]
-        public Task<IActionResult> PingTest()
+        public async Task<IActionResult> PingTest()
         {
-           
-            Ping pingSender = new Ping();
-            PingOptions options = new PingOptions();
-            options.DontFragment = true;
-            // Create a buffer of 32 bytes of data to be transmitted.
-            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-            byte[] buffer = Encoding.ASCII.GetBytes(data);
-            int timeout = 120;
+            string target = "https://www.example.com";
+            var client = _httpClientFactory.CreateClient();
+            var stopwatch = new Stopwatch();
 
-            string target = "www.google.com";
-            PingReply reply = pingSender.Send(target, timeout, buffer, options);
-
-            var response = new
+            try
             {
-                Message = "Your Ping Approximately",
-                Ping = reply.RoundtripTime
-            };
+                stopwatch.Start();
+                var response = await client.GetAsync(target);
+                stopwatch.Stop();
 
-            return Task.FromResult<IActionResult>(Ok(response));
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest($"Unable to reach {target}.");
+                }
 
+                var responseTime = stopwatch.ElapsedMilliseconds;
+                return Ok(new { Target = target, ResponseTimeMs = responseTime });
+            }
+            catch (HttpRequestException)
+            {
+                stopwatch.Stop();
+                return StatusCode(500, $"Error occurred while trying to reach {target}.");
+            }
         }
     }
 }
