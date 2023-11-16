@@ -204,7 +204,7 @@ namespace KaracaBesik_project1.Controllers
         private const int FileSize = 50 * 1024 * 1024; // 50 MB
 
         [HttpGet("DownloadFile")]
-        public IActionResult Download()
+        public async Task<IActionResult> DownloadAsync()
         {
             var client = new HttpClient();
             var response = await client.GetAsync("https://link.testfile.org/300MB");
