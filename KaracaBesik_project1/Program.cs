@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,10 @@ builder.Services.Configure<FormOptions>(x =>
 
 
 builder.Services.AddControllers();
+//for dependency injection:
+builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration["AzureBlobStorage:ConnectionString"]));
+builder.Services.AddSingleton(builder.Configuration["AzureBlobStorage:ContainerName"]);
+
 // Register HttpClientFactory
 builder.Services.AddHttpClient();
 
@@ -36,7 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
 
 app.UseRouting();
